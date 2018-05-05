@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    companion object {
+         val recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
+    }
+
     private lateinit var pd: ProgressDialog
     private var recordList = ArrayList<RecordBean>()
     private lateinit var recordAdapter: RecordAdapter
@@ -54,14 +58,11 @@ class MainActivity : AppCompatActivity() {
         initPermission()
         initProgressDialog()
 
-        initRecord()
         initClick()
-
         recordAdapter = RecordAdapter(this, recordList)
         lv_record.adapter = recordAdapter
-
         initData()
-
+        initRecord()
         //上传
         getCurrentTime()
     }
@@ -128,9 +129,7 @@ class MainActivity : AppCompatActivity() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Log.e("CallAutoRecord", "item.filePath = ${item.filePath}")
                 val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", File(item.filePath))
-                Log.e("CallAutoRecord", "uri = $uri")
                 intent.setDataAndType(uri, getMimeType(item.filePath))
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             } else {
@@ -147,7 +146,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPath(): String {
-        var recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
         val file = File(recordPath)
         return if (file.mkdirs()) {
             recordPath
@@ -156,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initRecord() {
-        val serviceIntent = Intent(this@MainActivity, CallRecorderService::class.java)
+        var serviceIntent = Intent(this@MainActivity, CallRecorderService::class.java)
         startService(serviceIntent)
     }
 
