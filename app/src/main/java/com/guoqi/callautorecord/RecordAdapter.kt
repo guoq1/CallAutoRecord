@@ -23,8 +23,6 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
 
     /**
      * 更新数据
-     *
-     * @param datas
      */
     fun resetData(datas: List<RecordBean>) {
         this.datas = datas

@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_slideshow" />
+        android:src="@mipmap/ic_music" />
 
     <TextView
         android:id="@+id/tv_name"

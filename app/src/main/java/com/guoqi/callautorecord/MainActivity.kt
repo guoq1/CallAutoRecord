@@ -1,5 +1,6 @@
 package com.guoqi.callautorecord
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -19,6 +20,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Response
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -39,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
+    private lateinit var pd: ProgressDialog
     private var recordList = ArrayList<RecordBean>()
     private lateinit var recordAdapter: RecordAdapter
 
@@ -48,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         initPermission()
+        initProgressDialog()
 
         initRecord()
         initClick()
@@ -56,6 +61,36 @@ class MainActivity : AppCompatActivity() {
         lv_record.adapter = recordAdapter
 
         initData()
+
+        //上传
+        getCurrentTime()
+    }
+
+    private fun getCurrentTime() {
+        loadDialog()
+        val url = "http://47.93.160.233/jsyf-oa/system/getCurrentTime.json"
+        OkGo.post<String>(url)
+                .execute(object : StringCallback() {
+                    override fun onSuccess(response: Response<String>?) {
+                        Log.e("JSON", response?.body().toString())
+                        removeDialog()
+                    }
+
+                    override fun onError(response: Response<String>?) {
+                        Log.e("JSON", response?.body().toString())
+                        removeDialog()
+                        super.onError(response)
+                    }
+
+                })
+    }
+
+    private fun initProgressDialog() {
+        pd = ProgressDialog(this)
+        pd.setMessage("加载中，请稍后")
+        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        pd.setCanceledOnTouchOutside(false)
+        pd.setCancelable(true)
     }
 
     private fun initData() {
@@ -176,6 +211,8 @@ class MainActivity : AppCompatActivity() {
             }
             if (!deniedList.isEmpty()) {
                 permissionListener!!.denied(deniedList)
+            }else{
+                initData()
             }
         }
     }
@@ -221,5 +258,15 @@ class MainActivity : AppCompatActivity() {
         }
         Log.e("CallAutoRecord", "getFileMime = $mime")
         return mime
+    }
+
+    fun loadDialog() {
+        pd.show()
+    }
+
+    fun removeDialog() {
+        if (pd.isShowing) {
+            pd.dismiss()
+        }
     }
 }
