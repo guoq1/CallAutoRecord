@@ -40,9 +40,10 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
             convertView = LayoutInflater.from(context).inflate(R.layout.adapter_item, null)
             viewHolder = ViewHolder()
             viewHolder.tv_name = convertView!!.findViewById<View>(R.id.tv_name) as TextView
-            viewHolder.tv_name?.text = datas[position].fileName
             convertView.tag = viewHolder
         }
+
+        viewHolder.tv_name?.text = datas[position].fileName
         return convertView
     }
 

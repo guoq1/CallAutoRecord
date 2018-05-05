@@ -89,12 +89,13 @@ class MainActivity : AppCompatActivity() {
         lv_record.setOnItemClickListener { adapterView, view, i, l ->
             var item = adapterView.adapter.getItem(i) as RecordBean
             //Snackbar.make(view, item.fileName, Snackbar.LENGTH_LONG).show()
-            val uri = Uri.parse(item.filePath)
             val intent = Intent(Intent.ACTION_VIEW)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val fileUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", File(item.filePath))
+                Log.e("CallAutoRecord", "item.filePath = ${item.filePath}")
+                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", File(item.filePath))
+                Log.e("CallAutoRecord", "uri = $uri")
                 intent.setDataAndType(uri, getMimeType(item.filePath))
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             } else {
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPath(): String {
-        var recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecorder"
+        var recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
         val file = File(recordPath)
         return if (file.mkdirs()) {
             recordPath

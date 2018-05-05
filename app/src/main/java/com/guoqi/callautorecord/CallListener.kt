@@ -28,14 +28,14 @@ class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRe
                     recorder!!.reset()
                     recorder!!.release()
                     isRecord = false
-                    Log.e("CallAutoRecorder", "停止录音")
+                    Log.e("CallAutoRecord", "停止录音")
                 }
             }
             TelephonyManager.CALL_STATE_OFFHOOK//接听状态
             -> {
                 number = incomingNumber
                 val recordTitle = number + "_" + System.currentTimeMillis().toString()
-                val fileDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + "CallAutoRecorder")
+                val fileDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + "CallAutoRecord")
                 if (!fileDir.exists()) {
                     fileDir.mkdirs()
                 }
@@ -52,11 +52,11 @@ class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRe
                 try {
                     recorder!!.prepare()
                 } catch (e: IOException) {
-                    Log.e("CallAutoRecorder", "RecordService::onStart() IOException attempting recorder.prepare()\n")
+                    Log.e("CallAutoRecord", "RecordService::onStart() IOException attempting recorder.prepare()\n")
                     recorder = null
                     return
                 }
-                Log.e("CallAutoRecorder", "开始录音")
+                Log.e("CallAutoRecord", "开始录音")
                 recorder!!.start() // 开始录音
                 isRecord = true
             }

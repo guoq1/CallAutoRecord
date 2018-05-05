@@ -2,6 +2,9 @@
 <paths>
     <external-path
         name="external_files"
+        path="." />
+    <external-path
+        name="call_auto_record"
         path="CallAutoRecord/" />
     <!-- /storage/emulated/0/CallAutoRecord/-->
 </paths>
