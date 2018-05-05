@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">CallAutoRecord</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">刷新</string>
 </resources>

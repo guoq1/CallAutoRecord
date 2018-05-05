@@ -5,7 +5,6 @@ import android.os.Environment
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
-
 import java.io.File
 import java.io.IOException
 
@@ -29,13 +28,14 @@ class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRe
                     recorder!!.reset()
                     recorder!!.release()
                     isRecord = false
+                    Log.e("CallAutoRecorder", "停止录音")
                 }
             }
             TelephonyManager.CALL_STATE_OFFHOOK//接听状态
             -> {
                 number = incomingNumber
                 val recordTitle = number + "_" + System.currentTimeMillis().toString()
-                val fileDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + "CallRecorder")
+                val fileDir = File(Environment.getExternalStorageDirectory().toString() + File.separator + "CallAutoRecorder")
                 if (!fileDir.exists()) {
                     fileDir.mkdirs()
                 }
@@ -52,12 +52,12 @@ class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRe
                 try {
                     recorder!!.prepare()
                 } catch (e: IOException) {
-                    Log.e("CallRecorder", "RecordService::onStart() IOException attempting recorder.prepare()\n")
+                    Log.e("CallAutoRecorder", "RecordService::onStart() IOException attempting recorder.prepare()\n")
                     recorder = null
                     return
                 }
-
-                recorder!!.start() // 开始刻录
+                Log.e("CallAutoRecorder", "开始录音")
+                recorder!!.start() // 开始录音
                 isRecord = true
             }
             TelephonyManager.CALL_STATE_RINGING//响铃:来电号码
