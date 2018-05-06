@@ -21,9 +21,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.lzy.okgo.OkGo
-import com.lzy.okgo.callback.StringCallback
-import com.lzy.okgo.model.Response
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
@@ -47,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        val IP = "http://www.119sx.cn/"
         val recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
     }
 
@@ -67,26 +65,7 @@ class MainActivity : AppCompatActivity() {
         initData()
         initRecord()
         //上传
-        getCurrentTime()
-    }
-
-    private fun getCurrentTime() {
-        loadDialog()
-        val url = "http://47.93.160.233/jsyf-oa/system/getCurrentTime.json"
-        OkGo.post<String>(url)
-                .execute(object : StringCallback() {
-                    override fun onSuccess(response: Response<String>?) {
-                        Log.e("JSON", response?.body().toString())
-                        removeDialog()
-                    }
-
-                    override fun onError(response: Response<String>?) {
-                        Log.e("JSON", response?.body().toString())
-                        removeDialog()
-                        super.onError(response)
-                    }
-
-                })
+        //getCurrentTime()
     }
 
     private fun initProgressDialog() {
@@ -154,22 +133,6 @@ class MainActivity : AppCompatActivity() {
             recordPath
         } else recordPath
     }
-
-    private fun getDuration(path: String) {
-        var player = MediaPlayer();
-        try {
-            player.setDataSource(path)  //recordingFilePath（）为音频文件的路径
-            player.prepare();
-        } catch (e: IOException) {
-            e.printStackTrace();
-        } catch (e: Exception) {
-            e.printStackTrace();
-        }
-        var duration = player.duration;//获取音频的时间
-        Log.e("CallAutoRecord", "### duration: $duration");
-        player.release()
-    }
-
 
     private fun initRecord() {
         var serviceIntent = Intent(this@MainActivity, CallRecorderService::class.java)
@@ -272,7 +235,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        Log.e("CallAutoRecord", "getFileMime = $mime")
+        //Log.e("CallAutoRecord", "getFileMime = $mime")
         return mime
     }
 
