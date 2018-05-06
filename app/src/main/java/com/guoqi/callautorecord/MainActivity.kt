@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +26,7 @@ import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,8 +45,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     companion object {
-         val recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
+        val recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
     }
 
     private lateinit var pd: ProgressDialog
@@ -62,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         recordAdapter = RecordAdapter(this, recordList)
         lv_record.adapter = recordAdapter
         initData()
-        initRecord()
+        //initRecord()
         //上传
         getCurrentTime()
     }
@@ -152,6 +155,21 @@ class MainActivity : AppCompatActivity() {
         } else recordPath
     }
 
+    private fun getDuration(path: String) {
+        var player = MediaPlayer();
+        try {
+            player.setDataSource(path)  //recordingFilePath（）为音频文件的路径
+            player.prepare();
+        } catch (e: IOException) {
+            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
+        var duration = player.duration;//获取音频的时间
+        Log.e("CallAutoRecord", "### duration: $duration");
+        player.release()
+    }
+
 
     private fun initRecord() {
         var serviceIntent = Intent(this@MainActivity, CallRecorderService::class.java)
@@ -209,7 +227,7 @@ class MainActivity : AppCompatActivity() {
             }
             if (!deniedList.isEmpty()) {
                 permissionListener!!.denied(deniedList)
-            }else{
+            } else {
                 initData()
             }
         }
