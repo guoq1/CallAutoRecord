@@ -1,6 +1,5 @@
 package com.guoqi.callautorecord
 
-import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -11,10 +10,8 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
+import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
+import com.guoqi.callautorecord.PhoneReceiver.Companion.callListener
 
 class CallRecorderService : Service() {
 
@@ -26,8 +23,9 @@ class CallRecorderService : Service() {
     override fun onCreate() {
         super.onCreate()
         val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        telephonyManager.listen(CallListener(), PhoneStateListener.LISTEN_CALL_STATE)
+        telephonyManager.listen(callListener, PhoneStateListener.LISTEN_CALL_STATE)
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        Log.e(TAG, "启动CallRecordService服务,监听来去电")
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -40,7 +38,7 @@ class CallRecorderService : Service() {
     }
 
 
-    inner class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener {
+    /*inner class CallListener : PhoneStateListener(), MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener {
 
         var context: Context = this@CallRecorderService
 
@@ -122,10 +120,10 @@ class CallRecorderService : Service() {
             return formatter.format(Date())
         }
 
-    }
+    }*/
 
     override fun onDestroy() {
         super.onDestroy()
-        Toast.makeText(this, "退出电话录音", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "电话录音服务关闭", Toast.LENGTH_LONG).show();
     }
 }

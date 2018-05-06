@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         recordAdapter = RecordAdapter(this, recordList)
         lv_record.adapter = recordAdapter
         initData()
-        //initRecord()
+        initRecord()
         //上传
         getCurrentTime()
     }
