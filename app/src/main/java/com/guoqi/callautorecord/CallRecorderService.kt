@@ -3,7 +3,6 @@ package com.guoqi.callautorecord
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.media.MediaRecorder
 import android.os.IBinder
 import android.os.Vibrator
 import android.telephony.PhoneStateListener
@@ -12,13 +11,10 @@ import android.util.Log
 import android.widget.Toast
 import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
 import com.guoqi.callautorecord.PhoneReceiver.Companion.callListener
+import com.guoqi.callautorecord.PhoneReceiver.Companion.vibrator
 
 class CallRecorderService : Service() {
 
-    var number: String? = null
-    var isRecord: Boolean = false
-    var recorder: MediaRecorder? = null
-    lateinit var vibrator: Vibrator
 
     override fun onCreate() {
         super.onCreate()

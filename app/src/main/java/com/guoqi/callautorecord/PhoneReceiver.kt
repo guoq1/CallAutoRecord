@@ -4,9 +4,12 @@ import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.MediaRecorder
+import android.os.Vibrator
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
+import java.io.File
 
 
 /**
@@ -31,50 +34,6 @@ import android.util.Log
 class PhoneReceiver : BroadcastReceiver() {
 
     private var context: Context? = null
-    /*var listener: PhoneStateListener = object : PhoneStateListener() {
-
-        override fun onCallStateChanged(state: Int, incomingNumber: String) {
-            super.onCallStateChanged(state, incomingNumber)
-            when (state) {
-                TelephonyManager.CALL_STATE_IDLE
-                -> {
-                    if (isHujiao && !isGuaduan) {
-                        Log.e(TAG, "等待拨号,然后通话")
-                        isHujiao = false
-                        isZhujiaoTonghua = true
-                    } else if (isZhujiaoTonghua && !isGuaduan ) {
-                        Log.e(TAG, "呼叫:挂断电话")
-                        isZhujiaoTonghua = false
-                        isGuaduan = true
-                    } else if (isLaiDian && !isGuaduan) {
-                        Log.e(TAG, "等待接听,然后通话")
-                        isLaidianTonghua = true
-                        isLaiDian = false
-                    } else if (isLaidianTonghua && !isGuaduan ) {
-                        Log.e(TAG, "被叫:挂断电话")
-                        isLaidianTonghua = false
-                        isGuaduan = true
-                    }
-
-                }
-                TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    Log.e(TAG, "摘机状态")
-                }
-                TelephonyManager.CALL_STATE_RINGING -> {
-                    // 来电状态，电话铃声响起的那段时间或正在通话又来新电，新来电话不得不等待的那段时间。
-                    if (!isLaiDian) {
-                        Log.e(TAG, "响铃:来电号码$incomingNumber")
-                        isLaiDian = true
-                        isGuaduan = false
-                    }
-                }
-                else -> {
-                    Log.e(TAG, "其他状态")
-                }
-            }
-        }
-    }*/
-
 
     override fun onReceive(context: Context, intent: Intent) {
         this.context = context
@@ -83,6 +42,7 @@ class PhoneReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_NEW_OUTGOING_CALL) {
             val phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER)
             Log.e(TAG, "呼叫:$phoneNumber")
+            number = phoneNumber
             isHujiao = true
             isGuaduan = false
         } else {
@@ -93,7 +53,7 @@ class PhoneReceiver : BroadcastReceiver() {
 
     companion object {
         val TAG = "CallAutoRecord"
-
+        lateinit var vibrator: Vibrator
         val callListener = CallListener()
 
         var isHujiao = false //呼叫
@@ -102,6 +62,11 @@ class PhoneReceiver : BroadcastReceiver() {
         var isLaiDian = false //来电
         var isLaidianTonghua = false //来电通话
         var isLaidianZhaiji = false //来电摘机
+
+        var number: String = ""
+        var isRecord: Boolean = false
+        val recorder = MediaRecorder()
+        var file: File? = null
     }
 
 }
