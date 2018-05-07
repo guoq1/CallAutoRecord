@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,13 +16,11 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        val IP = "http://www.119sx.cn/"
+        val IP = "http://www.119sx.cn"
         val recordPath = Environment.getExternalStorageDirectory().absolutePath + File.separator + "CallAutoRecord"
     }
 
@@ -62,10 +59,13 @@ class MainActivity : AppCompatActivity() {
         initClick()
         recordAdapter = RecordAdapter(this, recordList)
         lv_record.adapter = recordAdapter
+        recordAdapter.setOnRecordChangeListener(object : RecordAdapter.RecordChangeListener {
+            override fun onRecordChange() {
+                initData()
+            }
+        })
         initData()
         initRecord()
-        //上传
-        //getCurrentTime()
     }
 
     private fun initProgressDialog() {
@@ -77,9 +77,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
+        recordList.clear()
         var fileList = FileUtil.listFilesInDir(getPath())
         if (fileList != null && fileList.isNotEmpty()) {
-            recordList.clear()
             for (file in fileList) {
                 var item = RecordBean()
                 item.fileName = file.name

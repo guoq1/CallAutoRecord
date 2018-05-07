@@ -22,18 +22,20 @@
         android:text=""
         android:textColor="#333333" />
 
-    <TextView
+    <Button
         android:id="@+id/tv_upload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="上传" />
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:padding="5dp"
+        android:text="上传"
+        android:textSize="10sp" />
 
-    <TextView
+    <Button
         android:id="@+id/tv_del"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="删除" />
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:padding="5dp"
+        android:text="删除"
+        android:textSize="10sp" />
 
 </LinearLayout>

@@ -2,7 +2,9 @@ package com.guoqi.callautorecord
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.media.MediaPlayer
+import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,8 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import android.widget.Toast
 import com.guoqi.callautorecord.MainActivity.Companion.IP
+import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.HttpParams
+import com.lzy.okgo.model.Response
+import java.io.File
 import java.io.IOException
 
 
@@ -53,10 +61,10 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
 
         viewHolder.tv_name?.text = datas[position].fileName
         viewHolder.tv_upload?.setOnClickListener {
-            Upload(datas[position])
+            showConfirmDialog(datas[position], "确定要上传这条通话记录吗？")
         }
         viewHolder.tv_del?.setOnClickListener {
-
+            showConfirmDialog(datas[position], "确定要删除这条通话记录吗？")
         }
         return convertView
     }
@@ -68,7 +76,10 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
     }
 
 
-    private fun Upload(recordBean: RecordBean) {
+    /**
+     * 上传记录
+     */
+    private fun upLoadRecord(recordBean: RecordBean, tapeUrl: String) {
         val url = "$IP/visitRecord/save"
         var cusPhoneName = recordBean.fileName.split("_")[0]
         var callDate = recordBean.fileName.split("_")[1]
@@ -84,23 +95,56 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         param.put("callData", "$year-$month-$day")
         param.put(" callTime", "$hour:$min:$sec")
         param.put(" timeLength", getDuration(recordBean.filePath))
-        param.put(" tapeUrl", "")
-//        OkGo.post<String>(url)
-//                .params(param)
-//                .execute(object : StringCallback() {
-//                    override fun onSuccess(response: Response<String>?) {
-//                        Log.e("JSON", response?.body().toString())
-//                        //true
-//                    }
-//
-//                    override fun onError(response: Response<String>?) {
-//                        Log.e("JSON", response?.body().toString())
-//                        super.onError(response)
-//                    }
-//
-//                })
+        param.put(" tapeUrl", tapeUrl)
+        OkGo.post<String>(url)
+                .params(param)
+                .execute(object : StringCallback() {
+                    override fun onSuccess(response: Response<String>?) {
+                        Log.e("JSON onSuccess", response?.body().toString())
+                        if (response?.body().toString().toLowerCase() == "true") {
+                            Toast.makeText(context, "上传成功", Toast.LENGTH_LONG).show()
+                            //上传成功,删除本地文件
+                            FileUtil.deleteFile(recordBean.filePath)
+                            recordChangeListener?.onRecordChange()
+                        } else {
+                            Toast.makeText(context, "保存记录失败", Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onError(response: Response<String>?) {
+                        Log.e("JSON onError", response?.body().toString())
+                        super.onError(response)
+                        Toast.makeText(context, "保存记录错误", Toast.LENGTH_LONG).show()
+                    }
+
+                })
     }
 
+
+    //上传文件
+    private fun uploadTape(record: RecordBean) {
+        OkGo.post<String>("$IP/uploadTape")
+                .isMultipart(true)
+                .params("file", File(record.filePath))
+                .execute(object : StringCallback() {
+                    override fun onSuccess(response: Response<String>?) {
+                        Log.e("JSON onSuccess", response?.body().toString())
+                        var tapeUrl = response?.body().toString()
+                        if (tapeUrl != null && !tapeUrl.isEmpty()) {
+                            upLoadRecord(record, tapeUrl)
+                        } else {
+                            Toast.makeText(context, "上传录音成功，返回路径为空", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    override fun onError(response: Response<String>?) {
+                        Log.e("JSON onError", response?.body().toString())
+                        super.onError(response)
+                        Toast.makeText(context, "上传录音失败", Toast.LENGTH_LONG).show();
+                    }
+                })
+
+    }
 
     @SuppressLint("MissingPermission")
     private fun getNativePhoneNumber(): String? {
@@ -121,9 +165,35 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
             e.printStackTrace();
         }
         var duration = player.duration;//获取音频的时间
-        Log.e("CallAutoRecord", "### duration: $duration");
+        Log.e(TAG, "### duration: $duration");
         player.release()
         return duration
     }
 
+    private fun showConfirmDialog(record: RecordBean, str: String) {
+        AlertDialog.Builder(context).setTitle("提示")
+                .setMessage(str)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                    if (str.contains("上传")) {
+                        uploadTape(record)
+                    }
+                    if (str.contains("删除")) {
+                        FileUtil.deleteFile(record.filePath)
+                        recordChangeListener?.onRecordChange()
+                    }
+                }).show()
+    }
+
+    private var recordChangeListener: RecordChangeListener? = null
+
+    interface RecordChangeListener {
+        fun onRecordChange()
+    }
+
+    fun setOnRecordChangeListener(listener: RecordChangeListener) {
+        this.recordChangeListener = listener
+    }
+
 }
+
