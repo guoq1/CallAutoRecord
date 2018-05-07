@@ -425,7 +425,16 @@ class FileUtil private constructor() {
                         list.addAll(listFilesInDirWithFilter(file, filter, true)!!)
                     }
                 }
+                //按时间排序
+                list.sortWith(Comparator { file, newFile ->
+                    when {
+                        file.lastModified() < newFile.lastModified() -> 1
+                        file.lastModified() == newFile.lastModified() -> 0
+                        else -> -1
+                    }
+                })
             }
+
             return list
         }
 

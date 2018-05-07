@@ -64,7 +64,7 @@ class PhoneReceiver : BroadcastReceiver() {
 
         var number: String = ""
         var isRecord: Boolean = false
-        val recorder = MediaRecorder()
+        var recorder :MediaRecorder? = null
         var file: File? = null
     }
 

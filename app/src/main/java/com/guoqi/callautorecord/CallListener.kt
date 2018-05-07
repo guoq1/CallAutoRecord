@@ -77,20 +77,22 @@ class CallListener : PhoneStateListener() {
         var recordTitle = number + "_" + getCurrentDate()
         file = File(MainActivity.recordPath, "$recordTitle.amr")
         FileUtil.createOrExistsFile(file)
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)//存储格式
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)//设置编码
-        recorder.setOutputFile(file?.absolutePath)
+        recorder = MediaRecorder()
+        recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
+        recorder?.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT)//存储格式
+        recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)//设置编码
+        recorder?.setOutputFile(file?.absolutePath)
         try {
-            recorder.prepare()
+            recorder?.prepare()
             startRecord()
         } catch (e: IOException) {
             Log.e(TAG, "RecordService::onStart() IOException attempting recorder.prepare()\n" + e.printStackTrace())
         }
+
     }
 
     private fun startRecord() {
-        recorder.start()
+        recorder?.start()
         isRecord = true
         if (ACache.get(MyApplication.context).getAsObject(SetActivity.VIRBATE) as Boolean) {
             vibrator.vibrate(100)
@@ -100,11 +102,12 @@ class CallListener : PhoneStateListener() {
 
 
     private fun stopRecord() {
-        if (isRecord) {
-            recorder.stop()
-            recorder.reset()
-            recorder.release()
+        if (isRecord && recorder != null) {
+            recorder?.stop()
+            recorder?.reset()
+            recorder?.release()
             isRecord = false
+            recorder = null
             Log.e(TAG, "停止录音")
             if (ACache.get(MyApplication.context).getAsObject(SetActivity.VIRBATE) as Boolean) {
                 vibrator.vibrate(100)
@@ -116,7 +119,7 @@ class CallListener : PhoneStateListener() {
             if (file?.length() == 0L) {
                 FileUtil.deleteFile(file)
             } else {
-                //Thread(UploadTask()).start()  //将录音文件上传
+                //Thread(UploadTask()).start()  //录音文件自动上传
             }
             //如果开启过滤
             if (ACache.get(MyApplication.context).getAsObject(FILTER) as Boolean) {
