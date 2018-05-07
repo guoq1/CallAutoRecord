@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
@@ -64,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:checked="true"
             android:text="全部录音上传"
             android:textSize="14sp" />
 
