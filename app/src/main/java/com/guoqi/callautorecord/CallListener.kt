@@ -89,7 +89,9 @@ class CallListener : PhoneStateListener() {
     private fun startRecord() {
         recorder.start()
         isRecord = true
-        vibrator.vibrate(100)
+        if (ACache.get(MyApplication.context).getAsObject(SetActivity.VIRBATE) as Boolean) {
+            vibrator.vibrate(100)
+        }
         Log.e(TAG, "开始录音")
     }
 
@@ -101,7 +103,9 @@ class CallListener : PhoneStateListener() {
             recorder.release()
             isRecord = false
             Log.e(TAG, "停止录音")
-            vibrator.vibrate(100)
+            if (ACache.get(MyApplication.context).getAsObject(SetActivity.VIRBATE) as Boolean) {
+                vibrator.vibrate(100)
+            }
 
             //删除0KB的文件
             Log.e(TAG, "文件名称 = " + file?.name)

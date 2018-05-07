@@ -32,9 +32,7 @@ import java.io.File
  * @author GQ
  */
 class PhoneReceiver : BroadcastReceiver() {
-
-    private var context: Context? = null
-
+    var context: Context? = null
     override fun onReceive(context: Context, intent: Intent) {
         this.context = context
 
@@ -53,6 +51,7 @@ class PhoneReceiver : BroadcastReceiver() {
 
     companion object {
         val TAG = "CallAutoRecord"
+
         lateinit var vibrator: Vibrator
         val callListener = CallListener()
 
