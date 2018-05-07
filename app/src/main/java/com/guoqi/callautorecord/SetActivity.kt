@@ -25,17 +25,15 @@ class SetActivity : AppCompatActivity() {
     }
 
     private fun initSet() {
-        sw_vibrate.setOnCheckedChangeListener { _, check ->
-            ACache.get(this).put(VIRBATE, check)
-        }
-        if (ACache.get(this).getAsObject(VIRBATE) != null) {
-            sw_vibrate.isChecked = ACache.get(this).getAsObject(VIRBATE) as Boolean
-        } else {
-            //默认开启录音震动
-            ACache.get(this).put(VIRBATE, true)
-            sw_vibrate.isChecked = true
-        }
+        setVibrate()
 
+        setFilter()
+
+        setFilterTime()
+    }
+
+    //设置开启过滤,默认全部上传
+    private fun setFilter() {
         sw_filter.setOnCheckedChangeListener { _, check ->
             ACache.get(this).put(FILTER, check)
             if (check) {
@@ -44,62 +42,76 @@ class SetActivity : AppCompatActivity() {
                 ll_filter.visibility = View.GONE
             }
         }
+        if (ACache.get(this).getAsObject(FILTER) != null) {
+            sw_filter.isChecked = ACache.get(this).getAsObject(FILTER) as Boolean
+            if (sw_filter.isChecked) {
+                ll_filter.visibility = View.VISIBLE
+            } else {
+                ll_filter.visibility = View.GONE
+            }
+        } else {
+            ll_filter.visibility = View.GONE
+            ACache.get(this).put(FILTER, false)
+        }
+    }
 
+    //默认开启录音震动
+    private fun setVibrate() {
+        sw_vibrate.setOnCheckedChangeListener { _, check ->
+            ACache.get(this).put(VIRBATE, check)
+        }
+        if (ACache.get(this).getAsObject(VIRBATE) != null) {
+            sw_vibrate.isChecked = ACache.get(this).getAsObject(VIRBATE) as Boolean
+        } else {
+            ACache.get(this).put(VIRBATE, true)
+            sw_vibrate.isChecked = true
+        }
+    }
+
+    //设置过滤规则
+    private fun setFilterTime() {
         cb_all.setOnCheckedChangeListener { _, b ->
             if (b) {
-                ACache.get(this).put(FILTER_TIME, "all")
+                ACache.get(this).put(FILTER_TIME, 0)
                 resetCheck(cb_all)
             }
         }
         cb_15.setOnCheckedChangeListener { _, b ->
             if (b) {
-                ACache.get(this).put(FILTER_TIME, "15")
+                ACache.get(this).put(FILTER_TIME, 15)
                 resetCheck(cb_15)
             }
         }
         cb_30.setOnCheckedChangeListener { _, b ->
             if (b) {
-                ACache.get(this).put(FILTER_TIME, "30")
+                ACache.get(this).put(FILTER_TIME, 30)
                 resetCheck(cb_30)
             }
         }
         cb_60.setOnCheckedChangeListener { _, b ->
             if (b) {
-                ACache.get(this).put(FILTER_TIME, "60")
+                ACache.get(this).put(FILTER_TIME, 60)
                 resetCheck(cb_60)
             }
         }
-        if (ACache.get(this).getAsObject(FILTER) != null) {
-            sw_filter.isChecked = ACache.get(this).getAsObject(FILTER) as Boolean
-            if (sw_filter.isChecked) {
-                ll_filter.visibility = View.VISIBLE
-                //判断选中的是哪个过滤规则
-                if (ACache.get(this).getAsString(FILTER_TIME) != null) {
-                    when (ACache.get(this).getAsString(FILTER_TIME)) {
-                        "all" -> {
-                            resetCheck(cb_all)
-                        }
-                        "15" -> {
-                            resetCheck(cb_15)
-                        }
-                        "30" -> {
-                            resetCheck(cb_30)
-                        }
-                        "60" -> {
-                            resetCheck(cb_60)
-                        }
-                    }
-                } else {
-                    ACache.get(this).put(FILTER_TIME, "all")
+        if (ACache.get(this).getAsObject(FILTER_TIME) != null) {
+            when (ACache.get(this).getAsObject(FILTER_TIME) as Int) {
+                0 -> {
                     resetCheck(cb_all)
                 }
-            } else {
-                ll_filter.visibility = View.GONE
+                15 -> {
+                    resetCheck(cb_15)
+                }
+                30 -> {
+                    resetCheck(cb_30)
+                }
+                60 -> {
+                    resetCheck(cb_60)
+                }
             }
         } else {
-            //默认全部上传
-            ll_filter.visibility = View.GONE
-            ACache.get(this).put(FILTER, false)
+            ACache.get(this).put(FILTER_TIME, 0)
+            resetCheck(cb_all)
         }
     }
 

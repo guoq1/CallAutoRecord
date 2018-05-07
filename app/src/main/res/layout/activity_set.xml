@@ -16,7 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="开启录音震动提示" />
+            android:text="开启录音震动提示"
+            android:textColor="#333333"
+            android:textSize="16sp" />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/sw_vibrate"
@@ -29,6 +31,11 @@
             android:checked="true" />
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +47,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="是否开启录音过滤" />
+            android:text="是否开启录音过滤"
+            android:textColor="#333333"
+            android:textSize="16sp" />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/sw_filter"
@@ -92,4 +101,9 @@
             android:text="不上传小于60秒的录音"
             android:textSize="14sp" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
 </LinearLayout>

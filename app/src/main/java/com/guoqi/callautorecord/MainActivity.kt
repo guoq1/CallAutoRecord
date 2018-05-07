@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,12 +12,12 @@ import android.os.Environment
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -64,8 +63,12 @@ class MainActivity : AppCompatActivity() {
                 initData()
             }
         })
-        initData()
         initRecord()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initData()
     }
 
     private fun initProgressDialog() {
@@ -81,10 +84,14 @@ class MainActivity : AppCompatActivity() {
         var fileList = FileUtil.listFilesInDir(getPath())
         if (fileList != null && fileList.isNotEmpty()) {
             for (file in fileList) {
-                var item = RecordBean()
-                item.fileName = file.name
-                item.filePath = file.absolutePath
-                recordList.add(item)
+                if (file.length() > 0) {
+                    var item = RecordBean()
+                    item.fileName = file.name
+                    item.filePath = file.absolutePath
+                    recordList.add(item)
+                } else {
+                    FileUtil.deleteFile(file)
+                }
             }
         }
         if (recordList.isEmpty()) {
@@ -103,21 +110,6 @@ class MainActivity : AppCompatActivity() {
     private fun initClick() {
         fab.setOnClickListener { _ ->
             toCallPhoneUI("")
-        }
-        lv_record.setOnItemClickListener { adapterView, view, i, l ->
-            var item = adapterView.adapter.getItem(i) as RecordBean
-            //Snackbar.make(view, item.fileName, Snackbar.LENGTH_LONG).show()
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileProvider", File(item.filePath))
-                intent.setDataAndType(uri, getMimeType(item.filePath))
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            } else {
-                intent.setDataAndType(Uri.fromFile(File(item.filePath)), getMimeType(item.filePath))
-            }
-            startActivity(intent)
         }
     }
 
@@ -148,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_refresh -> {
                 initData()
+                Toast.makeText(this, "刷新成功", Toast.LENGTH_LONG).show()
                 true
             }
             R.id.action_settings -> {
@@ -221,26 +214,6 @@ class MainActivity : AppCompatActivity() {
             val call = Intent(Intent.ACTION_DIAL, uri)
             startActivity(call)
         }
-    }
-
-    private fun getMimeType(filePath: String?): String {
-        val mmr = MediaMetadataRetriever()
-        var mime = "application/*"
-        if (filePath != null) {
-            try {
-                mmr.setDataSource(filePath)
-                mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
-            } catch (e: IllegalStateException) {
-                return mime
-            } catch (e: IllegalArgumentException) {
-                return mime
-            } catch (e: RuntimeException) {
-                return mime
-            }
-
-        }
-        //Log.e("CallAutoRecord", "getFileMime = $mime")
-        return mime
     }
 
     fun loadDialog() {

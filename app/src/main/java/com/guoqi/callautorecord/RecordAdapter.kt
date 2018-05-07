@@ -3,7 +3,12 @@ package com.guoqi.callautorecord
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
+import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -11,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.guoqi.callautorecord.MainActivity.Companion.IP
@@ -53,6 +59,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         } else {
             convertView = LayoutInflater.from(context).inflate(R.layout.adapter_item, null)
             viewHolder = ViewHolder()
+            viewHolder.ll_item = convertView!!.findViewById<View>(R.id.ll_item) as LinearLayout
             viewHolder.tv_name = convertView!!.findViewById<View>(R.id.tv_name) as TextView
             viewHolder.tv_upload = convertView!!.findViewById<View>(R.id.tv_upload) as TextView
             viewHolder.tv_del = convertView!!.findViewById<View>(R.id.tv_del) as TextView
@@ -66,15 +73,48 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         viewHolder.tv_del?.setOnClickListener {
             showConfirmDialog(datas[position], "确定要删除这条通话记录吗？")
         }
+        viewHolder.ll_item?.setOnClickListener {
+            var intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(datas[position].filePath))
+                intent.setDataAndType(uri, getMimeType(datas[position].filePath))
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } else {
+                intent.setDataAndType(Uri.fromFile(File(datas[position].filePath)), getMimeType(datas[position].filePath))
+            }
+            context.startActivity(intent)
+        }
         return convertView
     }
 
     internal class ViewHolder {
+        var ll_item: LinearLayout? = null
         var tv_name: TextView? = null
         var tv_upload: TextView? = null
         var tv_del: TextView? = null
     }
 
+    private fun getMimeType(filePath: String?): String {
+        val mmr = MediaMetadataRetriever()
+        var mime = "application/*"
+        if (filePath != null) {
+            try {
+                mmr.setDataSource(filePath)
+                mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE)
+            } catch (e: IllegalStateException) {
+                return mime
+            } catch (e: IllegalArgumentException) {
+                return mime
+            } catch (e: RuntimeException) {
+                return mime
+            }
+
+        }
+        //Log.e("CallAutoRecord", "getFileMime = $mime")
+        return mime
+    }
 
     /**
      * 上传记录

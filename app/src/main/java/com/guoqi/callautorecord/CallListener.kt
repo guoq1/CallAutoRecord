@@ -1,6 +1,7 @@
 package com.guoqi.callautorecord
 
 import android.annotation.SuppressLint
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -12,6 +13,8 @@ import com.guoqi.callautorecord.PhoneReceiver.Companion.isRecord
 import com.guoqi.callautorecord.PhoneReceiver.Companion.number
 import com.guoqi.callautorecord.PhoneReceiver.Companion.recorder
 import com.guoqi.callautorecord.PhoneReceiver.Companion.vibrator
+import com.guoqi.callautorecord.SetActivity.Companion.FILTER
+import com.guoqi.callautorecord.SetActivity.Companion.FILTER_TIME
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -115,8 +118,31 @@ class CallListener : PhoneStateListener() {
             } else {
                 //Thread(UploadTask()).start()  //将录音文件上传
             }
+            //如果开启过滤
+            if (ACache.get(MyApplication.context).getAsObject(FILTER) as Boolean) {
+                var filterTime = ACache.get(MyApplication.context).getAsObject(FILTER_TIME) as Int
+                if (filterTime != null && getDuration(file?.absolutePath!!) < filterTime * 1000) {
+                    FileUtil.deleteFile(file)
+                }
+            }
 
         }
+    }
+
+    private fun getDuration(path: String): Int {
+        var player = MediaPlayer();
+        try {
+            player.setDataSource(path)  //recordingFilePath（）为音频文件的路径
+            player.prepare();
+        } catch (e: IOException) {
+            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace();
+        }
+        var duration = player.duration;//获取音频的时间
+        Log.e(TAG, "### duration: $duration");
+        player.release()
+        return duration
     }
 
     @SuppressLint("SimpleDateFormat")
