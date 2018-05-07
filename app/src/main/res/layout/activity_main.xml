@@ -28,7 +28,7 @@
         android:layout_below="@+id/ll_appBar"
         android:gravity="center"
         android:paddingBottom="120dp"
-        android:text="暂无录音记录"
+        android:text="暂无通话记录"
         android:textColor="#999999"
         android:textSize="18sp"
         android:visibility="gone">

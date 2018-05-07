@@ -173,14 +173,14 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
                         if (tapeUrl != null && !tapeUrl.isEmpty()) {
                             upLoadRecord(record, tapeUrl)
                         } else {
-                            Toast.makeText(context, "上传录音成功，返回路径为空", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "上传通话成功，返回路径为空", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     override fun onError(response: Response<String>?) {
                         Log.e("JSON onError", response?.body().toString())
                         super.onError(response)
-                        Toast.makeText(context, "上传录音失败", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "上传通话失败", Toast.LENGTH_LONG).show();
                     }
                 })
 

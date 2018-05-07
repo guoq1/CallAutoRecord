@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="开启录音震动提示"
+            android:text="开启通话震动提示"
             android:textColor="#333333"
             android:textSize="16sp" />
 
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:text="是否开启录音过滤"
+            android:text="是否开启通话过滤"
             android:textColor="#333333"
             android:textSize="16sp" />
 
@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:checked="true"
-            android:text="全部录音上传"
+            android:text="全部通话上传"
             android:textSize="14sp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="不上传小于15秒的录音"
+            android:text="忽略小于15秒的通话"
             android:textSize="14sp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="不上传小于30秒的录音"
+            android:text="忽略小于30秒的通话"
             android:textSize="14sp" />
 
         <android.support.v7.widget.AppCompatCheckBox
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="不上传小于60秒的录音"
+            android:text="忽略小于60秒的通话"
             android:textSize="14sp" />
     </LinearLayout>
 
