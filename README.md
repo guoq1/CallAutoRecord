@@ -18,13 +18,13 @@
 #### 效果图
 
 1. 录音列表
-![](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG363.png)
+![1](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG363.png)
 
 2. 自定义功能(上传/删除录音)
-![](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG362.jpeg)
+![2](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG362.jpeg)
 
 3. 简单设置页
-![](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG361.png)
+![3](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG361.png)
 
 
 #### 缕一遍流程,打印log日志
@@ -32,10 +32,10 @@
 > 一开始为了缕清逻辑,写了多个标记位,洁癖患者可以改造一下,对不起,对不起!
 
 1. 主叫
-![](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/1.png)
+![1](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/1.png)
 
 2. 被叫
-![](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/2.png)
+![2](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/2.png)
 
 #### 主要代码
 
