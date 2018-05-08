@@ -18,12 +18,15 @@
 #### 效果图
 
 1. 录音列表
+
 ![1](/screenshot/WechatIMG363.png)
 
 2. 自定义功能(上传/删除录音)
+
 ![2](/screenshot/WechatIMG362.jpeg)
 
 3. 简单设置页
+
 ![3](/screenshot/WechatIMG361.png)
 
 
@@ -32,9 +35,11 @@
 > 一开始为了缕清逻辑,写了多个标记位,洁癖患者可以改造一下,对不起,对不起!
 
 1. 主叫
+
 ![1](/screenshot/1.png)
 
 2. 被叫
+
 ![2](/screenshot/2.png)
 
 #### 主要代码
