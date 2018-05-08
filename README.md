@@ -18,7 +18,7 @@
 #### 效果图
 
 1. 录音列表
-![1](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG363.png)
+![1](/CallAutoRecord /screenSpot/WechatIMG363.png)
 
 2. 自定义功能(上传/删除录音)
 ![2](https://gitee.com/madaigou/CallAutoRecord/blob/master/screenSpot/WechatIMG362.jpeg)
