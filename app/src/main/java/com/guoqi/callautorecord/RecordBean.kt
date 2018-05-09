@@ -9,6 +9,7 @@ class RecordBean : Serializable {
 
     var fileName: String = ""
     var filePath: String = ""
+    var name: String = ""
 
     constructor()
 }

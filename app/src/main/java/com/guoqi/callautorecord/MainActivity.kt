@@ -91,6 +91,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData() {
         recordList.clear()
+        //已上传的
+//        if (ACache.get(this).getAsString("record") != null) {
+//            recordList = JSON.parseArray(ACache.get(this).getAsString("record"), RecordBean::class.java) as ArrayList<RecordBean>
+//        }
+        //未上传的
         var fileList = FileUtil.listFilesInDir(getPath())
         if (fileList != null && fileList.isNotEmpty()) {
             for (file in fileList) {
