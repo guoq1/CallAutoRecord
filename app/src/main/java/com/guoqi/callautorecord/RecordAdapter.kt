@@ -31,6 +31,7 @@ import java.io.IOException
 
 class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAdapter() {
 
+    private var needUpload: Boolean = false
     override fun getCount(): Int {
         return if (datas.isEmpty()) 0 else datas.size
     }
@@ -41,6 +42,10 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
+    }
+
+    fun setNeedUpload(needUpload: Boolean) {
+        this.needUpload = needUpload
     }
 
     /**
@@ -61,30 +66,42 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
             viewHolder = ViewHolder()
             viewHolder.ll_item = convertView!!.findViewById<View>(R.id.ll_item) as LinearLayout
             viewHolder.tv_name = convertView!!.findViewById<View>(R.id.tv_name) as TextView
+            viewHolder.tv_time = convertView!!.findViewById<View>(R.id.tv_time) as TextView
             viewHolder.tv_upload = convertView!!.findViewById<View>(R.id.tv_upload) as TextView
             viewHolder.tv_del = convertView!!.findViewById<View>(R.id.tv_del) as TextView
             convertView.tag = viewHolder
         }
 
-        viewHolder.tv_name?.text = datas[position].fileName
-        viewHolder.tv_upload?.setOnClickListener {
-            showConfirmDialog(datas[position], "确定要上传这条通话记录吗？")
-        }
-        viewHolder.tv_del?.setOnClickListener {
-            showConfirmDialog(datas[position], "确定要删除这条通话记录吗？")
-        }
-        viewHolder.ll_item?.setOnClickListener {
-            var intent = Intent(Intent.ACTION_VIEW)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addCategory(Intent.CATEGORY_DEFAULT)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(datas[position].filePath))
-                intent.setDataAndType(uri, getMimeType(datas[position].filePath))
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            } else {
-                intent.setDataAndType(Uri.fromFile(File(datas[position].filePath)), getMimeType(datas[position].filePath))
+        if (needUpload) {
+            viewHolder.tv_name?.text = datas[position].fileName
+            viewHolder.tv_upload?.visibility = View.VISIBLE
+            viewHolder.tv_upload?.setOnClickListener {
+                showConfirmDialog(datas[position], "确定要上传这条通话记录吗？")
             }
-            context.startActivity(intent)
+            viewHolder.tv_del?.visibility = View.VISIBLE
+            viewHolder.tv_del?.setOnClickListener {
+                showConfirmDialog(datas[position], "确定要删除这条通话记录吗？")
+            }
+
+            viewHolder.ll_item?.setOnClickListener {
+                var intent = Intent(Intent.ACTION_VIEW)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileProvider", File(datas[position].filePath))
+                    intent.setDataAndType(uri, getMimeType(datas[position].filePath))
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                } else {
+                    intent.setDataAndType(Uri.fromFile(File(datas[position].filePath)), getMimeType(datas[position].filePath))
+                }
+                context.startActivity(intent)
+            }
+        } else {
+            viewHolder.tv_name?.text = datas[position].customerPhone
+            viewHolder.tv_time?.text = datas[position].callData + " " + datas[position].callTime
+            viewHolder.tv_upload?.visibility = View.GONE
+            viewHolder.tv_del?.visibility = View.GONE
+            viewHolder.ll_item?.setOnClickListener { null }
         }
         return convertView
     }
@@ -92,6 +109,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
     internal class ViewHolder {
         var ll_item: LinearLayout? = null
         var tv_name: TextView? = null
+        var tv_time: TextView? = null
         var tv_upload: TextView? = null
         var tv_del: TextView? = null
     }
@@ -134,9 +152,9 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         param.put("phone", getNativePhoneNumber())
         param.put("customerPhone", cusPhoneName)
         param.put("callData", "$year-$month-$day")
-        param.put(" callTime", "$hour:$min:$sec")
-        param.put(" timeLength", getDuration(recordBean.filePath))
-        param.put(" tapeUrl", tapeUrl)
+        param.put("callTime", "$hour:$min:$sec")
+        param.put("timeLength", getDuration(recordBean.filePath))
+        param.put("tapeUrl", tapeUrl)
         OkGo.post<String>(url)
                 .params(param)
                 .execute(object : StringCallback() {

@@ -3,8 +3,8 @@
     android:id="@+id/ll_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
     android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <ImageView
@@ -23,13 +23,26 @@
         android:text=""
         android:textColor="#333333" />
 
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:gravity="right"
+        android:maxLines="1"
+        android:text=""
+        android:textColor="#666666" />
+
     <Button
         android:id="@+id/tv_upload"
         android:layout_width="40dp"
         android:layout_height="32dp"
         android:padding="5dp"
         android:text="上传"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/tv_del"
@@ -37,6 +50,7 @@
         android:layout_height="32dp"
         android:padding="5dp"
         android:text="删除"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="visible" />
 
 </LinearLayout>

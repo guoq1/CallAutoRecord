@@ -14,10 +14,15 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.alibaba.fastjson.JSON
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Response
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
@@ -34,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun denied(deniedList: List<String>) {
             if (!deniedList.isEmpty()) {
-                showPermissionManagerDialog(this@MainActivity, "相关")
+                //showPermissionManagerDialog(this@MainActivity, "相关")
             }
         }
     }
@@ -46,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var pd: ProgressDialog
     private var recordList = ArrayList<RecordBean>()
+    private var uploadList = ArrayList<RecordBean>()
     private lateinit var recordAdapter: RecordAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setSupportActionBar(toolbar)
-        initPermission()
         initProgressDialog()
 
         initClick()
@@ -61,15 +66,18 @@ class MainActivity : AppCompatActivity() {
         lv_record.adapter = recordAdapter
         recordAdapter.setOnRecordChangeListener(object : RecordAdapter.RecordChangeListener {
             override fun onRecordChange() {
-                initData()
+                getUploadList()
+                changeTab(1)
             }
         })
         initRecord()
+        changeTab(0)
     }
 
     override fun onResume() {
         super.onResume()
         setTitle()
+        initPermission()
         initData()
     }
 
@@ -89,13 +97,52 @@ class MainActivity : AppCompatActivity() {
         pd.setCancelable(true)
     }
 
+    private fun changeTab(pos: Int) {
+        if (pos == 0) {
+            tv_record.setBackgroundResource(android.R.color.holo_green_dark)
+            tv_record.setTextColor(resources.getColor(android.R.color.white))
+            tv_upload.setBackgroundResource(android.R.color.darker_gray)
+            tv_upload.setTextColor(resources.getColor(android.R.color.white))
+            if (recordList.isEmpty()) {
+                //显示空
+                tv_none.visibility = View.VISIBLE
+                lv_record.visibility = View.GONE
+            } else {
+                //隐藏空
+                tv_none.visibility = View.GONE
+                lv_record.visibility = View.VISIBLE
+                recordAdapter.setNeedUpload(false)
+                recordAdapter.resetData(recordList)
+            }
+        } else {
+            tv_upload.setBackgroundResource(android.R.color.holo_green_dark)
+            tv_upload.setTextColor(resources.getColor(android.R.color.white))
+            tv_record.setBackgroundResource(android.R.color.darker_gray)
+            tv_record.setTextColor(resources.getColor(android.R.color.white))
+            if (recordList.isEmpty()) {
+                //显示空
+                tv_none.visibility = View.VISIBLE
+                lv_record.visibility = View.GONE
+            } else {
+                //隐藏空
+                tv_none.visibility = View.GONE
+                lv_record.visibility = View.VISIBLE
+                recordAdapter.setNeedUpload(true)
+                recordAdapter.resetData(uploadList)
+            }
+        }
+
+    }
+
     private fun initData() {
-        recordList.clear()
         //已上传的
-//        if (ACache.get(this).getAsString("record") != null) {
-//            recordList = JSON.parseArray(ACache.get(this).getAsString("record"), RecordBean::class.java) as ArrayList<RecordBean>
-//        }
+        getRecordHistory()
         //未上传的
+        getUploadList()
+    }
+
+    private fun getUploadList() {
+        uploadList.clear()
         var fileList = FileUtil.listFilesInDir(getPath())
         if (fileList != null && fileList.isNotEmpty()) {
             for (file in fileList) {
@@ -103,26 +150,42 @@ class MainActivity : AppCompatActivity() {
                     var item = RecordBean()
                     item.fileName = file.name
                     item.filePath = file.absolutePath
-                    recordList.add(item)
+                    uploadList.add(item)
                 } else {
                     FileUtil.deleteFile(file)
                 }
             }
         }
-        if (recordList.isEmpty()) {
-            //显示空
-            tv_none.visibility = View.VISIBLE
-            lv_record.visibility = View.GONE
-        } else {
-            //隐藏空
-            tv_none.visibility = View.GONE
-            lv_record.visibility = View.VISIBLE
+    }
 
-            recordAdapter.resetData(recordList)
-        }
+    private fun getRecordHistory() {
+        pd.show()
+        val url = "$IP/visitRecord/findForList"
+        OkGo.post<String>(url)
+                .params("param", ACache.get(this).getAsString("name"))
+                .params("pageNo", 1)
+                .params("pageSize", Int.MAX_VALUE)
+                .execute(object : StringCallback() {
+                    override fun onSuccess(response: Response<String>?) {
+                        Log.e("JSON onSuccess", response?.body().toString())
+                        var obj = JSON.parseObject(response?.body().toString())
+                        recordList = JSON.parseArray(obj.getString("content"), RecordBean::class.java) as ArrayList<RecordBean>
+                        changeTab(0)
+                        if (pd != null && pd.isShowing) {
+                            pd.dismiss()
+                        }
+                    }
+
+                    override fun onError(response: Response<String>?) {
+                        super.onError(response)
+                    }
+                })
+
     }
 
     private fun initClick() {
+        tv_record.setOnClickListener { changeTab(0) }
+        tv_upload.setOnClickListener { changeTab(1) }
         fab.setOnClickListener { _ ->
             toCallPhoneUI("")
         }

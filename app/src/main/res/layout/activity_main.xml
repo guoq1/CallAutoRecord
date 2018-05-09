@@ -35,11 +35,43 @@
 
     </TextView>
 
+    <LinearLayout
+        android:id="@+id/ll_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_appBar"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_record"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_dark"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="通话记录"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"></TextView>
+
+        <TextView
+            android:id="@+id/tv_upload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="待上传"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"></TextView>
+    </LinearLayout>
+
     <ListView
         android:id="@+id/lv_record"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_appBar" />
+        android:layout_below="@+id/ll_tab" />
 
 
     <android.support.design.widget.FloatingActionButton

@@ -147,7 +147,7 @@ class CallListener : PhoneStateListener() {
                     //录音文件自动上传
                     uploadTape(item)
                 }
-            }, 5000)
+            }, 3000)
 
         }
     }
@@ -197,9 +197,9 @@ class CallListener : PhoneStateListener() {
         param.put("phone", getNativePhoneNumber())
         param.put("customerPhone", cusPhoneName)
         param.put("callData", "$year-$month-$day")
-        param.put(" callTime", "$hour:$min:$sec")
-        param.put(" timeLength", getDuration(recordBean.filePath))
-        param.put(" tapeUrl", tapeUrl)
+        param.put("callTime", "$hour:$min:$sec")
+        param.put("timeLength", getDuration(recordBean.filePath))
+        param.put("tapeUrl", tapeUrl)
         OkGo.post<String>(url)
                 .params(param)
                 .execute(object : StringCallback() {
