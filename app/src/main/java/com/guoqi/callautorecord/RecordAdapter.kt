@@ -130,6 +130,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         var min = callDate.substring(10, 12)
         var sec = callDate.substring(12, 14)
         var param = HttpParams()
+        param.put("name", ACache.get(context).getAsString("name"))
         param.put("phone", getNativePhoneNumber())
         param.put("customerPhone", cusPhoneName)
         param.put("callData", "$year-$month-$day")
