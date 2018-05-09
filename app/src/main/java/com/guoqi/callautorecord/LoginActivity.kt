@@ -16,9 +16,7 @@ class LoginActivity : AppCompatActivity() {
         btn_start.setOnClickListener {
             if (et_name.text.isNotEmpty()) {
                 ACache.get(this).put("name", et_name.text.toString())
-                var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                intent.putExtra("name", et_name.text.toString())
-                startActivity(intent)
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 finish()
             } else {
                 et_name.error = "请输入姓名"

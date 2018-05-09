@@ -51,14 +51,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (ACache.get(this).getAsString("name") == null) {
-            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-        } else {
-            toolbar.title = resources.getString(R.string.app_name) + (" (" + ACache.get(this).getAsString("name") + ")")
-        }
-        if (intent.getStringExtra("name") != null) {
-            toolbar.title = intent.getStringExtra("name")
-        }
+
         setSupportActionBar(toolbar)
         initPermission()
         initProgressDialog()
@@ -76,7 +69,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        setTitle()
         initData()
+    }
+
+    private fun setTitle() {
+        if (ACache.get(this).getAsString("name") == null) {
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+        } else {
+            toolbar.title = resources.getString(R.string.app_name) + (" (" + ACache.get(this).getAsString("name") + ")")
+        }
     }
 
     private fun initProgressDialog() {
@@ -157,6 +159,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_exit -> {
                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)
