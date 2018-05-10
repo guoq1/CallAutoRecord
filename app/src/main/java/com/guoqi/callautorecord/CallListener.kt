@@ -14,6 +14,7 @@ import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
 import com.guoqi.callautorecord.PhoneReceiver.Companion.file
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isLaidianZhaiji
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isRecord
+import com.guoqi.callautorecord.PhoneReceiver.Companion.isZhujiaoZhaiji
 import com.guoqi.callautorecord.PhoneReceiver.Companion.number
 import com.guoqi.callautorecord.PhoneReceiver.Companion.recorder
 import com.guoqi.callautorecord.PhoneReceiver.Companion.vibrator
@@ -40,7 +41,6 @@ class CallListener : PhoneStateListener() {
                     Log.e(PhoneReceiver.TAG, "等待拨号,然后通话")
                     PhoneReceiver.isHujiao = false
                     PhoneReceiver.isZhujiaoTonghua = true
-                    prepareRecord()
                 } else if (PhoneReceiver.isZhujiaoTonghua && !PhoneReceiver.isGuaduan) {
                     Log.e(PhoneReceiver.TAG, "呼叫:挂断电话")
                     stopRecord()
@@ -63,8 +63,13 @@ class CallListener : PhoneStateListener() {
 
             }
             TelephonyManager.CALL_STATE_OFFHOOK -> {
-                Log.e(PhoneReceiver.TAG, "摘机状态")
+                if (PhoneReceiver.isZhujiaoZhaiji) {
+                    Log.e(PhoneReceiver.TAG, "主叫:摘机状态")
+                    isZhujiaoZhaiji = false
+                    prepareRecord()
+                }
                 if (PhoneReceiver.isLaidianTonghua) {
+                    Log.e(PhoneReceiver.TAG, "被叫:摘机状态")
                     isLaidianZhaiji = true
                     prepareRecord()
                 }

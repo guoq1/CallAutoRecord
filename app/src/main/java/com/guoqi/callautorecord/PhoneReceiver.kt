@@ -17,10 +17,11 @@ import java.io.File
  *
  * 主叫流程:
  *      呼叫:拨出号码$phoneNumber
- *      摘机状态(每次都会调用,因为主叫是你主动发起电话)
- *      等待拨号,然后通话                            //开始事件,等待也算做通话
- *      ...
- *      挂断电话(自己或者对方挂断都会调用)              //结束事件
+ *      主叫:摘机状态                                     //开始事件,等待也算做通话
+ *      开始录音
+ *      等待拨号,然后通话
+ *      呼叫:挂断电话(自己或者对方挂断都会调用)              //结束事件
+ *      停止录音
  *
  * 被叫流程:
  *      响铃:来电号码$incomingNumber
@@ -43,6 +44,7 @@ class PhoneReceiver : BroadcastReceiver() {
             number = phoneNumber
             isHujiao = true
             isGuaduan = false
+            isZhujiaoZhaiji = true
         } else {
             val tm = context.getSystemService(Service.TELEPHONY_SERVICE) as TelephonyManager
             tm.listen(callListener, PhoneStateListener.LISTEN_CALL_STATE)
@@ -60,11 +62,12 @@ class PhoneReceiver : BroadcastReceiver() {
         var isGuaduan = true //挂断
         var isLaiDian = false //来电
         var isLaidianTonghua = false //来电通话
+        var isZhujiaoZhaiji = false //主叫摘机
         var isLaidianZhaiji = false //来电摘机
 
         var number: String = ""
         var isRecord: Boolean = false
-        var recorder :MediaRecorder? = null
+        var recorder: MediaRecorder? = null
         var file: File? = null
     }
 
