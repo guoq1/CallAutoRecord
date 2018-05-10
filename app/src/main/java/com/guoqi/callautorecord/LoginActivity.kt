@@ -20,6 +20,7 @@ class LoginActivity : AppCompatActivity() {
     private val PERMISSIONS_PHONE = arrayOf("android.permission.READ_PHONE_STATE", "android.permission.CALL_PHONE", "android.permission.READ_CALL_LOG", "android.permission.WRITE_CALL_LOG", "android.permission.PROCESS_OUTGOING_CALLS")
     private var permissionListener = object : PermissionListener {
         override fun granted() {
+            initData()
         }
 
         override fun denied(deniedList: List<String>) {
@@ -32,8 +33,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        initData()
 
         btn_start.setOnClickListener {
             if (et_name.text.isEmpty()) {
