@@ -65,12 +65,22 @@ class CallListener : PhoneStateListener() {
                 if (PhoneReceiver.isZhujiaoZhaiji) {
                     Log.e(PhoneReceiver.TAG, "主叫:摘机状态")
                     isZhujiaoZhaiji = false
-                    prepareRecord()
+                    if (ACache.get(context).getAsObject(SetActivity.RULE) == null
+                            || (ACache.get(context).getAsObject(SetActivity.RULE) as Int == 0)
+                            || (ACache.get(context).getAsObject(SetActivity.RULE) as Int == 1)
+                    ) {
+                        prepareRecord()
+                    }
                 }
                 if (PhoneReceiver.isLaiDian && !isLaidianZhaiji) {
                     Log.e(PhoneReceiver.TAG, "被叫:摘机状态")
                     isLaidianZhaiji = true
-                    prepareRecord()
+                    if (ACache.get(context).getAsObject(SetActivity.RULE) == null
+                            || (ACache.get(context).getAsObject(SetActivity.RULE) as Int == 0)
+                            || (ACache.get(context).getAsObject(SetActivity.RULE) as Int == 2)
+                    ) {
+                        prepareRecord()
+                    }
                 }
             }
             TelephonyManager.CALL_STATE_RINGING -> {

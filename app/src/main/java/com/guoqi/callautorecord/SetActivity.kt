@@ -11,6 +11,7 @@ class SetActivity : AppCompatActivity() {
 
     companion object {
         val VIRBATE = "vibrate"
+        val RULE = "rule"
         val FILTER = "filter"
         val FILTER_TIME = "filter_time"
     }
@@ -27,9 +28,51 @@ class SetActivity : AppCompatActivity() {
     private fun initSet() {
         setVibrate()
 
+        setRule()
+
         setFilter()
 
         setFilterTime()
+    }
+
+    //默认双向录音
+    private fun setRule() {
+        cb_callAll.setOnCheckedChangeListener { _, b ->
+            if (b) {
+                ACache.get(this).put(RULE, 0)
+                resetCheckRule(cb_callAll)
+            }
+        }
+        cb_callCome.setOnCheckedChangeListener { _, b ->
+            if (b) {
+                ACache.get(this).put(RULE, 1)
+                resetCheckRule(cb_callCome)
+            }
+        }
+        cb_callOut.setOnCheckedChangeListener { _, b ->
+            if (b) {
+                ACache.get(this).put(RULE, 2)
+                resetCheckRule(cb_callOut)
+            }
+        }
+
+        if (ACache.get(this).getAsObject(RULE) != null) {
+            when (ACache.get(this).getAsObject(RULE) as Int) {
+                0 -> {
+                    resetCheckRule(cb_callAll)
+                }
+                1 -> {
+                    resetCheckRule(cb_callCome)
+                }
+                2 -> {
+                    resetCheckRule(cb_callOut)
+                }
+            }
+        } else {
+            ACache.get(this).put(FILTER_TIME, 0)
+            resetCheckRule(cb_callAll)
+        }
+
     }
 
     //设置开启过滤,默认全部上传
@@ -120,6 +163,14 @@ class SetActivity : AppCompatActivity() {
         cb_15.isChecked = false
         cb_30.isChecked = false
         cb_60.isChecked = false
+        //选中
+        cb.isChecked = true
+    }
+
+    private fun resetCheckRule(cb: CheckBox) {
+        cb_callAll.isChecked = false
+        cb_callCome.isChecked = false
+        cb_callOut.isChecked = false
         //选中
         cb.isChecked = true
     }
