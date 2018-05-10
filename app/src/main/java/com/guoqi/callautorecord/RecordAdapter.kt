@@ -1,6 +1,5 @@
 package com.guoqi.callautorecord
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -10,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -151,7 +149,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         var sec = callDate.substring(12, 14)
         var param = HttpParams()
         param.put("name", ACache.get(context).getAsString("name"))
-        param.put("phone", getNativePhoneNumber())
+        param.put("phone", ACache.get(context).getAsString("tel"))
         param.put("customerPhone", cusPhoneName)
         param.put("callData", "$year-$month-$day")
         param.put("callTime", "$hour:$min:$sec")
@@ -205,14 +203,6 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
                     }
                 })
 
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getNativePhoneNumber(): String? {
-        var nativePhoneNumber: String? = null
-        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        nativePhoneNumber = telephonyManager.line1Number
-        return nativePhoneNumber
     }
 
     private fun getDuration(path: String): Int {

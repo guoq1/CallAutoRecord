@@ -1,18 +1,10 @@
 package com.guoqi.callautorecord
 
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -28,21 +20,6 @@ import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
-
-    private val PERMISSIONS_STORAGE = arrayOf("android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE")
-    private val PERMISSIONS_RECORD = arrayOf("android.permission.RECORD_AUDIO")
-    private val PERMISSIONS_CONTACTS = arrayOf("android.permission.READ_CONTACTS", "android.permission.WRITE_CONTACTS", "android.permission.GET_ACCOUNTS")
-    private val PERMISSIONS_PHONE = arrayOf("android.permission.READ_PHONE_STATE", "android.permission.CALL_PHONE", "android.permission.READ_CALL_LOG", "android.permission.WRITE_CALL_LOG", "android.permission.PROCESS_OUTGOING_CALLS")
-    private var permissionListener = object : PermissionListener {
-        override fun granted() {
-        }
-
-        override fun denied(deniedList: List<String>) {
-            if (!deniedList.isEmpty()) {
-                //showPermissionManagerDialog(this@MainActivity, "相关")
-            }
-        }
-    }
 
     companion object {
         val IP = "http://www.119sx.cn"
@@ -77,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         setTitle()
-        initPermission()
         initData()
     }
 
@@ -160,6 +136,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRecordHistory() {
+        if (this == null || this.isFinishing) return
         pd.show()
         val url = "$IP/visitRecord/findForList"
         OkGo.post<String>(url)
@@ -192,11 +169,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestRuntimePermissions(PERMISSIONS_STORAGE + PERMISSIONS_RECORD + PERMISSIONS_CONTACTS + PERMISSIONS_PHONE, permissionListener)
-        }
-    }
 
     private fun getPath(): String {
         val file = File(recordPath)
@@ -233,60 +205,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    /**
-     * 申请权限
-     */
-    private fun requestRuntimePermissions(permissions: Array<String>, listener: PermissionListener) {
-        var permissionList = ArrayList<String>()
-        // 遍历每一个申请的权限，把没有通过的权限放在集合中
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission) !== PackageManager.PERMISSION_GRANTED) {
-                permissionList.add(permission)
-            } else {
-                permissionListener?.granted()
-            }
-        }
-        // 申请权限
-        if (!permissionList.isEmpty()) {
-            ActivityCompat.requestPermissions(this, permissionList.toTypedArray(), 1)
-        }
-    }
-
-    /**
-     * 申请后的处理
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty()) {
-            val deniedList = ArrayList<String>()
-            for (i in grantResults.indices) {
-                val grantResult = grantResults[i]
-                if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    permissionListener!!.granted()
-                } else {
-                    deniedList.add(permissions[i])
-                }
-            }
-            if (!deniedList.isEmpty()) {
-                permissionListener!!.denied(deniedList)
-            } else {
-                initData()
-            }
-        }
-    }
-
-
-    fun showPermissionManagerDialog(context: Context, str: String) {
-        AlertDialog.Builder(context).setTitle("获取" + str + "权限被禁用")
-                .setMessage("请在 设置-应用管理-" + context.getString(R.string.app_name) + "-权限管理 (将" + str + "权限打开)")
-                .setNegativeButton("取消", null)
-                .setPositiveButton("去设置", DialogInterface.OnClickListener { _, _ ->
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    intent.data = Uri.parse("package:" + context.packageName)
-                    context.startActivity(intent)
-                }).show()
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.guoqi.callautorecord
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.telephony.PhoneStateListener
@@ -198,7 +197,7 @@ class CallListener : PhoneStateListener() {
         var sec = callDate.substring(12, 14)
         var param = HttpParams()
         param.put("name", ACache.get(context).getAsString("name"))
-        param.put("phone", getNativePhoneNumber())
+        param.put("phone", ACache.get(context).getAsString("tel"))
         param.put("customerPhone", cusPhoneName)
         param.put("callData", "$year-$month-$day")
         param.put("callTime", "$hour:$min:$sec")
@@ -260,13 +259,5 @@ class CallListener : PhoneStateListener() {
     private fun getCurrentDate(): String {
         val formatter = SimpleDateFormat("yyyyMMddHHmmss")
         return formatter.format(Date())
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getNativePhoneNumber(): String? {
-        var nativePhoneNumber: String? = null
-        val telephonyManager = MyApplication.context?.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        nativePhoneNumber = telephonyManager.line1Number
-        return nativePhoneNumber
     }
 }

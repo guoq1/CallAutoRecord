@@ -21,6 +21,21 @@
         android:layout_margin="16dp"
         android:hint="请输入" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="16dp"
+        android:text="请输入本机号码"
+        android:textSize="18sp" />
+
+    <android.support.design.widget.TextInputEditText
+        android:id="@+id/et_tel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:hint="请输入" />
+
 
     <Button
         android:id="@+id/btn_start"
