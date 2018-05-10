@@ -113,9 +113,13 @@ class CallListener : PhoneStateListener() {
 
     private fun stopRecord() {
         if (isRecord && recorder != null) {
-            recorder?.stop()
-            recorder?.reset()
-            recorder?.release()
+            try {
+                recorder?.stop()
+                recorder?.reset()
+                recorder?.release()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             isRecord = false
             recorder = null
             Log.e(TAG, "停止录音")

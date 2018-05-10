@@ -75,6 +75,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         if (needUpload) {
             viewHolder.tv_name?.text = datas[position].fileName
             viewHolder.tv_upload?.visibility = View.VISIBLE
+            viewHolder.tv_time?.visibility = View.GONE
             viewHolder.tv_upload?.setOnClickListener {
                 showConfirmDialog(datas[position], "确定要上传这条通话记录吗？")
             }
@@ -99,6 +100,7 @@ class RecordAdapter(var context: Context, var datas: List<RecordBean>) : BaseAda
         } else {
             viewHolder.tv_name?.text = datas[position].customerPhone
             viewHolder.tv_time?.text = datas[position].callData + " " + datas[position].callTime
+            viewHolder.tv_time?.visibility = View.VISIBLE
             viewHolder.tv_upload?.visibility = View.GONE
             viewHolder.tv_del?.visibility = View.GONE
             viewHolder.ll_item?.setOnClickListener { null }

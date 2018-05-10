@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
     private fun setTitle() {
         if (ACache.get(this).getAsString("name") == null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+            finish()
         } else {
             toolbar.title = resources.getString(R.string.app_name) + (" (" + ACache.get(this).getAsString("name") + ")")
         }
