@@ -12,8 +12,6 @@ import com.guoqi.callautorecord.MainActivity.Companion.IP
 import com.guoqi.callautorecord.MyApplication.Companion.context
 import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
 import com.guoqi.callautorecord.PhoneReceiver.Companion.file
-import com.guoqi.callautorecord.PhoneReceiver.Companion.isGuaduan
-import com.guoqi.callautorecord.PhoneReceiver.Companion.isLaiDian
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isLaidianZhaiji
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isRecord
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isZhujiaoZhaiji
@@ -50,11 +48,15 @@ class CallListener : PhoneStateListener() {
                     PhoneReceiver.isGuaduan = true
                     number = ""
                 } else if (PhoneReceiver.isLaiDian && !PhoneReceiver.isGuaduan && isLaidianZhaiji) {
+                    Log.e(PhoneReceiver.TAG, "接听电话,然后通话")
+                    PhoneReceiver.isLaidianTonghua = true
+                    PhoneReceiver.isLaiDian = false
+                    isLaidianZhaiji = false
+                } else if (PhoneReceiver.isLaidianTonghua && !PhoneReceiver.isGuaduan) {
                     Log.e(PhoneReceiver.TAG, "被叫:挂断电话")
                     stopRecord()
-                    isLaiDian = false
-                    isGuaduan = true
-                    isLaidianZhaiji = false
+                    PhoneReceiver.isLaidianTonghua = false
+                    PhoneReceiver.isGuaduan = true
                     number = ""
                 }
 

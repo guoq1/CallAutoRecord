@@ -61,6 +61,7 @@ class PhoneReceiver : BroadcastReceiver() {
         var isZhujiaoTonghua = false //主叫通话
         var isGuaduan = true //挂断
         var isLaiDian = false //来电
+        var isLaidianTonghua = false //来电通话
         var isZhujiaoZhaiji = false //主叫摘机
         var isLaidianZhaiji = false //来电摘机
 
