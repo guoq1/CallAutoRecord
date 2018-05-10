@@ -134,9 +134,4 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        System.exit(0)
-    }
 }
