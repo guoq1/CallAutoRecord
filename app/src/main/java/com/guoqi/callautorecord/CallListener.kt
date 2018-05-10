@@ -12,6 +12,8 @@ import com.guoqi.callautorecord.MainActivity.Companion.IP
 import com.guoqi.callautorecord.MyApplication.Companion.context
 import com.guoqi.callautorecord.PhoneReceiver.Companion.TAG
 import com.guoqi.callautorecord.PhoneReceiver.Companion.file
+import com.guoqi.callautorecord.PhoneReceiver.Companion.isGuaduan
+import com.guoqi.callautorecord.PhoneReceiver.Companion.isLaiDian
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isLaidianZhaiji
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isRecord
 import com.guoqi.callautorecord.PhoneReceiver.Companion.isZhujiaoZhaiji
@@ -47,18 +49,13 @@ class CallListener : PhoneStateListener() {
                     PhoneReceiver.isZhujiaoTonghua = false
                     PhoneReceiver.isGuaduan = true
                     number = ""
-                } else if (PhoneReceiver.isLaiDian && !PhoneReceiver.isGuaduan) {
-                    Log.e(PhoneReceiver.TAG, "等待接听,然后通话")
-                    PhoneReceiver.isLaidianTonghua = true
-                    PhoneReceiver.isLaiDian = false
-                } else if (PhoneReceiver.isLaidianTonghua && !PhoneReceiver.isGuaduan && !isLaidianZhaiji) {
+                } else if (PhoneReceiver.isLaiDian && !PhoneReceiver.isGuaduan && isLaidianZhaiji) {
                     Log.e(PhoneReceiver.TAG, "被叫:挂断电话")
                     stopRecord()
-                    PhoneReceiver.isLaidianTonghua = false
-                    PhoneReceiver.isGuaduan = true
-                    number = ""
-                } else if (isLaidianZhaiji) {
+                    isLaiDian = false
+                    isGuaduan = true
                     isLaidianZhaiji = false
+                    number = ""
                 }
 
             }
@@ -68,7 +65,7 @@ class CallListener : PhoneStateListener() {
                     isZhujiaoZhaiji = false
                     prepareRecord()
                 }
-                if (PhoneReceiver.isLaidianTonghua) {
+                if (PhoneReceiver.isLaiDian && !isLaidianZhaiji) {
                     Log.e(PhoneReceiver.TAG, "被叫:摘机状态")
                     isLaidianZhaiji = true
                     prepareRecord()
@@ -81,6 +78,7 @@ class CallListener : PhoneStateListener() {
                     Log.e(PhoneReceiver.TAG, "响铃:来电号码$incomingNumber")
                     PhoneReceiver.isLaiDian = true
                     PhoneReceiver.isGuaduan = false
+                    isLaidianZhaiji = false
                 }
             }
         }
