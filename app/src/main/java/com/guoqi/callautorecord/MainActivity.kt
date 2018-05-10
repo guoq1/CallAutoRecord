@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         setTitle()
-        initData()
     }
 
     private fun setTitle() {
@@ -63,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             finish()
         } else {
             toolbar.title = resources.getString(R.string.app_name) + (" (" + ACache.get(this).getAsString("name") + ")")
+            initData()
         }
     }
 
